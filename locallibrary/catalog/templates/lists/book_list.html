@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <table>
+        {% for book in book_list %}
+            <tr>
+                <td>{{ book.title }}</td>
+                <td style="background-color: #acfff7;">({{ book.author }})</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <span style="background-color: #003366;color: white;padding: .3em">{{ sample_value }}</span>
+{% endblock %}
