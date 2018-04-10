@@ -20,15 +20,16 @@ def index(request):
 class BookListView(generic.ListView):
     model = Book
     template_name = 'lists/book_list.html'
-    queryset = Book.objects.filter(title__icontains=' a ')
 
-    def get_context_data(self, **kwargs):
-        context = super(BookListView, self).get_context_data(**kwargs)
-        context['sample_value'] = "it's a sample value for test!"
-        return context
+    # this is an approach for send extra data to template.
+    # def get_context_data(self, **kwargs):
+    #     context = super(BookListView, self).get_context_data(**kwargs)
+    #     context['sample_value'] = "it's a sample value for test!"
+    #     return context
 
-def authors():
-    return None
+class AuthorListView(generic.ListView):
+    model = Author
+    template_name = 'lists/author_list.html'
 
 
 def book():

@@ -1,13 +1,30 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <table>
-        {% for book in book_list %}
-            <tr>
-                <td>{{ book.title }}</td>
-                <td style="background-color: #acfff7;">({{ book.author }})</td>
+    {% if book_list %}
+        <table class="table">
+            <tr class="info">
+                <th>
+                    Book Name
+                </th>
+                <th>
+                    Author
+                </th>
+                <th>
+                    Genres
+                </th>
             </tr>
-        {% endfor %}
-    </table>
-    <span style="background-color: #003366;color: white;padding: .3em">{{ sample_value }}</span>
+            {% for book in book_list %}
+                <tr>
+{#                    <td><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></td>#}
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.display_genre }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <blockquote>There is no book in library!</blockquote>
+    {% endif %}
+
 {% endblock %}
