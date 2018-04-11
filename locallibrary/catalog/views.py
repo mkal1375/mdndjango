@@ -20,6 +20,7 @@ def index(request):
 class BookListView(generic.ListView):
     model = Book
     template_name = 'lists/book_list.html'
+    paginate_by = 20
 
     # this is an approach for send extra data to template.
     # def get_context_data(self, **kwargs):
@@ -27,14 +28,18 @@ class BookListView(generic.ListView):
     #     context['sample_value'] = "it's a sample value for test!"
     #     return context
 
+
 class AuthorListView(generic.ListView):
     model = Author
     template_name = 'lists/author_list.html'
+    paginate_by = 20
 
 
-def book():
-    return None
+class BookDetailView(generic.DeleteView):
+    model = Book
+    template_name = 'details/book_detail.html'
 
 
-def author():
-    return None
+class AuthorDetailView(generic.DetailView):
+    model = Author
+    template_name = 'details/author_detail.html'

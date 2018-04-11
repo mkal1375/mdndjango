@@ -25,9 +25,9 @@
             </tr>
             {% for book in book_list %}
                 <tr>
-{#                    <td><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></td>#}
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ book.title }}</td>
+                    <td><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></td>
+{#                    <td>{{ book.title }}</td>#}
                     <td>{{ book.author }}</td>
                     <td>{{ book.display_genre }}</td>
                 </tr>

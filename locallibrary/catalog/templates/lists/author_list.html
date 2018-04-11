@@ -15,7 +15,11 @@
         </tr>
         {% for author in author_list %}
             <tr>
-                <td>{{ forloop.counter }}</td>
+                <td>
+                    <a href="{{ author.get_absolute_url }}">
+                        {{ forloop.counter }}
+                    </a>
+                </td>
                 <td>{{ author.first_name }}</td>
                 <td>{{ author.last_name }}</td>
                 <td>{{ author.date_of_birth }}</td>
