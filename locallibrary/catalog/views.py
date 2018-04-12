@@ -1,4 +1,5 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render
 from django.views import generic
 from .models import Book, Author, BookInstance, Genre
@@ -50,15 +51,22 @@ class AuthorDetailView(generic.DetailView):
     template_name = 'details/author_detail.html'
 
 
-class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
-    """
-    Generic class-based view listing books on loan to current user.
-    """
-
+# list view for book instances ... you need just inherit this.
+class BookInstanceListView(LoginRequiredMixin, generic.ListView):
     model = BookInstance
-    template_name = 'lists/loaned_book_list.html'
     paginate_by = 20
+
+
+class LoanedBooksByUserListView(BookInstanceListView):
+    template_name = 'lists/loaned_book_list.html'
 
     def get_queryset(self):
         return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact='o').order_by('due_back')
 
+
+class AllLoanedBooksListView(PermissionRequiredMixin, BookInstanceListView):
+    permission_required = ('catalog.can_mark_returned', 'catalog.can_edit')
+    template_name = 'lists/all_borrowed.html'
+
+    def get_queryset(self):
+        return BookInstance.objects.filter(status__exact='o').order_by('due_back')
