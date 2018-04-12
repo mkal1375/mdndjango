@@ -9,6 +9,11 @@
                 <th>Book name</th>
                 <th>Due Back</th>
                 <th>Days Left</th>
+                {% if perms.catalog.can_mark_returned %}
+                    <th>
+                        Renew
+                    </th>
+                {% endif %}
             </tr>
             {% for bookinstance in bookinstance_list %}
                 <tr>
@@ -18,6 +23,11 @@
                         <td class="text-danger"><strong>Over Due</strong></td>
                     {% else %}
                         <td>{{ bookinstance.left_days }}</td>
+                    {% endif %}
+                    {% if perms.catalog.can_mark_returned %}
+                        <td>
+                            <a href="{% url 'renew-book-librarian' bookinstance.id %}">Renew</a>
+                        </td>
                     {% endif %}
                 </tr>
             {% endfor %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>
+        renewal book
+    </title>
+{% endblock %}
+
+{% block content %}
+    <h1>Renew {{ bookinstance.book.title.title }}</h1>
+    <p>Borrower: {{ bookinstance.borrower }}</p>
+    <p{% if bookinstance.left_days < 0 %} class="text-danger{% endif %}">Due date: {{ bookinstance.due_back }}</p>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <table class="table">
+            {{ form }}
+        </table>
+        <input type="submit" name="submit" value="Submit"/>
+    </form>
+{% endblock %}
