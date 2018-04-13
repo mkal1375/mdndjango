@@ -13,9 +13,9 @@
 
     <form action="" method="POST">
         {% csrf_token %}
-        <table class="table">
-            {{ form }}
-        </table>
+{#        <table class="table">#}
+            {{ form.as_u }}
+{#        </table>#}
         <input type="submit" name="submit" value="Submit"/>
     </form>
 {% endblock %}

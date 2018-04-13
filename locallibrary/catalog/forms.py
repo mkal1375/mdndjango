@@ -1,3 +1,4 @@
+from .models import Author, Language, Genre
 from django.core.exceptions import ValidationError
 from django import forms
 from django.utils.translation import ugettext_lazy as _
@@ -17,3 +18,12 @@ class RenewBookForm(forms.Form):
             raise ValidationError(_('Invalid date - renewal more than 4 weeks ahead'))
 
         return data
+
+
+class AddBookForm(forms.Form):
+    title = forms.CharField(max_length=200)
+    author = forms.ModelChoiceField(queryset=Author.objects.all())
+    summery = forms.CharField(max_length=1000, required=False)
+    isbn = forms.CharField(min_length=13, max_length=13)
+    language = forms.ModelChoiceField(queryset=Language.objects.all())
+    genre = forms.ModelMultipleChoiceField(queryset=Genre.objects.all(), required=False)

@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import generic
 from .models import Book, Author, BookInstance, Genre
-from .forms import RenewBookForm
+from .forms import RenewBookForm , AddBookForm
 
 
 def index(request):
@@ -106,3 +106,26 @@ def renew_book_librarian(request, pk):
         form = RenewBookForm(initial={'renewal_date': proposed_renewal_date,})
 
     return render(request, 'book_renew_librarian.html', {'form': form, 'bookinstance':book_instance})
+
+
+@permission_required('catalog.can_create')
+def add_book(request):
+    form = AddBookForm(request.POST)
+
+    if request.method == "POST":
+        if form.is_valid():
+            book = Book()
+            book.title = form.cleaned_data['title']
+            book.author = form.cleaned_data['author']
+            book.save()
+
+            return HttpResponseRedirect(reverse('books'))
+
+    return render(request, 'add_book.html', context={'form':form})
+
+def delete_book(request, pk):
+    return None
+
+
+def edit_book(request, pk):
+    return None

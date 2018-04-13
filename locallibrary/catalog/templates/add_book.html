@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>
+        Add New Book
+    </title>
+{% endblock %}
+
+{% block content %}
+    <h1>Add Book</h1>
+
+    <form action="">
+        {% csrf_token %}
+        <table class="table">
+            {{ form }}
+        </table>
+        <input type="submit" name="submit" value="Submit"/>
+    </form>
+{% endblock %}
