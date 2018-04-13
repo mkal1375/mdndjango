@@ -22,14 +22,25 @@
                 <th>
                     Genres
                 </th>
+                {% if user.is_staff %}
+                    <th>
+                        Options
+                    </th>
+                {% endif %}
             </tr>
             {% for book in book_list %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></td>
-{#                    <td>{{ book.title }}</td>#}
+                    {#                    <td>{{ book.title }}</td>#}
                     <td>{{ book.author }}</td>
                     <td>{{ book.display_genre }}</td>
+                    {% if user.is_staff %}
+                        <td>
+                            <a class="text-danger" href="{% url 'are-you-sure-delete-book' book.pk %}">Delete</a>
+                            <a href="#" class="text-info">Edit</a>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </table>

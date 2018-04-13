@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>
+        Are You Sure?
+    </title>
+{% endblock %}
+
+{% block content %}
+    <h1>Are You Sure?</h1>
+    <h2>are you sure delete <strong>{{ data.title }}</strong>? ({{ type }})</h2>
+    {% if type == 'book' %}
+        <a href="{% url 'delete-book' data.pk %}" class="text-danger">Yes, delete this book.</a>
+        <a href="{% url 'books' %}" class="text-info">No, Cancel it.</a>
+    {% endif %}
+{#    TODO: uncomment this lines when delete author feature implemented.#}
+{#    {% if type == 'author' %}#}
+{#        <a href="{% url delete-author data.pk %}">Yes, delete this author.</a>#}
+{#    {% endif %}#}
+{% endblock %}

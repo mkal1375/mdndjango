@@ -4,10 +4,11 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
 from .models import Book, Author, BookInstance, Genre
 from .forms import RenewBookForm , AddBookForm
+from django.urls import utils
 
 
 def index(request):
@@ -117,6 +118,11 @@ def add_book(request):
             book = Book()
             book.title = form.cleaned_data['title']
             book.author = form.cleaned_data['author']
+            book.language = form.cleaned_data['language']
+            book.isbn = form.cleaned_data['isbn']
+            book.summary = form.cleaned_data['summary']
+            book.save()
+            book.genre.set(form.cleaned_data['genre'])
             book.save()
 
             return HttpResponseRedirect(reverse('books'))
@@ -124,8 +130,18 @@ def add_book(request):
     return render(request, 'add_book.html', context={'form':form})
 
 def delete_book(request, pk):
-    return None
+    book = get_object_or_404(Book, pk=pk)
+    book.delete()
+    return HttpResponseRedirect(reverse('books'))
+
+
+
+
 
 
 def edit_book(request, pk):
     return None
+
+def are_you_sure_delete_book(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    return render(request, 'are_you_sure.html', context={'type':'book','data':book})

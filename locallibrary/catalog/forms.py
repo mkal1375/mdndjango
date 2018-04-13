@@ -23,7 +23,7 @@ class RenewBookForm(forms.Form):
 class AddBookForm(forms.Form):
     title = forms.CharField(max_length=200)
     author = forms.ModelChoiceField(queryset=Author.objects.all())
-    summery = forms.CharField(max_length=1000, required=False)
+    summary = forms.CharField(max_length=1000, required=False)
     isbn = forms.CharField(min_length=13, max_length=13)
     language = forms.ModelChoiceField(queryset=Language.objects.all())
     genre = forms.ModelMultipleChoiceField(queryset=Genre.objects.all(), required=False)

@@ -4,7 +4,7 @@
 {#    the second title is string method that make string in title format. => str.title()#}
   <h1>Title: {{ book.title.title }}</h1>
   <p><strong>Author:</strong> <a href="{{ book.author.get_absolute_url }}">{{ book.author }}</a></p>
-  <p><strong>Summary:</strong> {{ book.summery }}</p>
+  <p><strong>Summary:</strong> {{ book.summary }}</p>
   <p><strong>ISBN:</strong> {{ book.isbn }}</p>
   <p><strong>Language:</strong> {{ book.language }}</p>
   <p><strong>Genre:</strong> {% for genre in book.genre.all %} {{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
