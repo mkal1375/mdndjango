@@ -7,12 +7,13 @@
 {% endblock %}
 {% block content %}
     <table class="table">
-        <tr class="info">
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Date of Birth</th>
-        </tr>
+        <thead class="thead-light">
+        <th>#</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Date of Birth</th>
+        <th>Options</th>
+        </thead>
         {% for author in author_list %}
             <tr>
                 <td>
@@ -23,6 +24,10 @@
                 <td>{{ author.first_name }}</td>
                 <td>{{ author.last_name }}</td>
                 <td>{{ author.date_of_birth }}</td>
+                <td>
+                    <a class="btn btn-outline-danger" href="{% url 'delete-author' author.pk %}">Delete</a>
+                    <a href="{% url 'update-author' author.pk %}" class="btn btn-outline-primary">Edit</a>
+                </td>
             </tr>
         {% endfor %}
     </table>

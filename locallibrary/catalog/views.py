@@ -7,8 +7,10 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from .models import Book, Author, BookInstance, Genre
-from .forms import RenewBookForm , AddBookForm
-from django.urls import utils
+from .forms import RenewBookForm, AddBookForm
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django import forms
+
 
 
 def index(request):
@@ -78,13 +80,12 @@ class AllLoanedBooksListView(PermissionRequiredMixin, BookInstanceListView):
         return BookInstance.objects.filter(status__exact='o').order_by('due_back')
 
 
-
 @permission_required('catalog.can_mark_returned')
 def renew_book_librarian(request, pk):
     """
     View function for renewing a specific BookInstance by librarian
     """
-    book_instance=get_object_or_404(BookInstance, pk = pk)
+    book_instance = get_object_or_404(BookInstance, pk=pk)
 
     # If this is a POST request then process the Form data
     if request.method == 'POST':
@@ -99,49 +100,107 @@ def renew_book_librarian(request, pk):
             book_instance.save()
 
             # redirect to a new URL:
-            return HttpResponseRedirect(reverse('all-borrowed') )
+            return HttpResponseRedirect(reverse('all-borrowed'))
 
     # If this is a GET (or any other method) create the default form.
     else:
         proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
-        form = RenewBookForm(initial={'renewal_date': proposed_renewal_date,})
+        form = RenewBookForm(initial={'renewal_date': proposed_renewal_date, })
 
-    return render(request, 'book_renew_librarian.html', {'form': form, 'bookinstance':book_instance})
-
-
-@permission_required('catalog.can_create')
-def add_book(request):
-    form = AddBookForm(request.POST)
-
-    if request.method == "POST":
-        if form.is_valid():
-            book = Book()
-            book.title = form.cleaned_data['title']
-            book.author = form.cleaned_data['author']
-            book.language = form.cleaned_data['language']
-            book.isbn = form.cleaned_data['isbn']
-            book.summary = form.cleaned_data['summary']
-            book.save()
-            book.genre.set(form.cleaned_data['genre'])
-            book.save()
-
-            return HttpResponseRedirect(reverse('books'))
-
-    return render(request, 'add_book.html', context={'form':form})
-
-def delete_book(request, pk):
-    book = get_object_or_404(Book, pk=pk)
-    book.delete()
-    return HttpResponseRedirect(reverse('books'))
+    return render(request, 'book_renew_librarian.html', {'form': form, 'bookinstance': book_instance})
 
 
+# Replaced by create generic view class.
+# @permission_required('catalog.can_create')
+# def add_book(request):
+#     form = AddBookForm(request.POST)
+#
+#     if request.method == "POST":
+#         if form.is_valid():
+#             book = Book()
+#             book.title = form.cleaned_data['title']
+#             book.author = form.cleaned_data['author']
+#             book.language = form.cleaned_data['language']
+#             book.isbn = form.cleaned_data['isbn']
+#             book.summary = form.cleaned_data['summary']
+#             book.save()
+#             book.genre.set(form.cleaned_data['genre'])
+#             book.save()
+#
+#             return HttpResponseRedirect(reverse('books'))
+#
+#     return render(request, 'add_book.html', context={'form': form})
+
+# Replaced by generic confirm page in BookDeleteView class.
+# def are_you_sure_delete_book(request, pk):
+#     book = get_object_or_404(Book, pk=pk)
+#     return render(request, 'are_you_sure.html', context={'type': 'book', 'data': book})
 
 
+# Replaced by delete generic view class.
+# def delete_book(request, pk):
+#     book = get_object_or_404(Book, pk=pk)
+#     book.delete()
+#     return HttpResponseRedirect(reverse('books'))
 
 
-def edit_book(request, pk):
-    return None
+# Book Model:
+class BookCreateView(CreateView):
+    model = Book
+    fields = '__all__'
+    template_name = 'book/book_create.html'
 
-def are_you_sure_delete_book(request, pk):
-    book = get_object_or_404(Book, pk=pk)
-    return render(request, 'are_you_sure.html', context={'type':'book','data':book})
+
+class BookUpdateView(UpdateView):
+    model = Book
+    fields = '__all__'
+    template_name = 'book/book_update.html'
+
+
+class BookDeleteView(DeleteView):
+    model = Book
+    success_url = reverse_lazy('books')
+    template_name = 'book/book_confirm_delete.html'
+
+
+# BookInstance Model:
+class BookInstanceCreateView(CreateView):
+    # TODO: add feature / add patch(book/<int:book_id>/create_instance and add link on books list.
+    model = BookInstance
+    fields = ['book', 'imprint', 'status']
+    template_name = 'bookinstance/bookinstance_create.html'
+
+
+class BookInstanceUpdateView(UpdateView):
+    model = BookInstance
+    fields = ['book', 'imprint', 'status']
+    template_name = 'bookinstance/bookinstance_update.html'
+
+
+class BookInstanceDeleteView(DeleteView):
+    model = BookInstance
+    template_name = 'bookinstance/bookinstance_confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse_lazy('book-detail', args=(self.object.book.id,))
+
+
+# Author Model:
+
+class AuthorCreateView(CreateView):
+    model = Author
+    fields = '__all__'
+    template_name = 'author/author_create.html'
+    # TODO: add date picker for date fields.
+
+class AuthorUpdateView(UpdateView):
+    model = Author
+    fields = '__all__'
+    template_name = 'author/author_update.html'
+    # TODO: add date picker for date fields.
+
+class AuthorDeleteView(DeleteView):
+    model = Author
+    template_name = 'author/author_confirm_delete.html'
+    success_url = reverse_lazy('authors')
+

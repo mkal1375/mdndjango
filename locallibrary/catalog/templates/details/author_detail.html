@@ -8,11 +8,16 @@
 
 {% block content %}
     <h2>Author : {{ author.first_name }} {{ author.last_name }}</h2>
-    <h5 class="text-muted">({{ author.date_of_birth }} - {% if author.date_of_death %}{{ author.date_of_death }}{% else %}Now{% endif %})</h5>
+    <h5 class="text-muted">({{ author.date_of_birth }} -
+        {% if author.date_of_death %}{{ author.date_of_death }}{% else %}Now{% endif %})</h5>
+    <a href="{% url 'update-author' author.pk %}" class="btn btn-outline-primary">Edit Author</a>
+{#  TODO:edit bottom line when create book author aware feature implemented.#}
+    <a href="{% url 'create-book'%}" class="btn btn-outline-warning">Add author's book</a>
     <div style="padding: 2em">
         <h4>Books</h4>
         {% for book in author.book_set.all %}
-            <a href="{{ book.get_absolute_url }}" style="font-weight: 600">{{ book.title }}</a><span> ({{ book.bookinstance_set.count }})</span>
+            <a href="{{ book.get_absolute_url }}" style="font-weight: 600">{{ book.title }}</a>
+            <span> ({{ book.bookinstance_set.count }})</span>
             <p>{{ book.summary }}</p>
             <hr>
         {% endfor %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>
+        Add Book
+    </title>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="" style="margin-bottom: 1em">
+        {% csrf_token %}
+        <table class="table" dir="ltr">
+            <thead class="thead-light">
+            <th>
+                <h4>Add New Book</h4>
+            </th>
+            <th>
+            </th>
+            </thead>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" class="btn btn-outline-primary"/>
+        <a href="{% url 'books' %}" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+{% endblock %}

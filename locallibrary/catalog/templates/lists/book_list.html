@@ -9,7 +9,7 @@
 {% block content %}
     {% if book_list %}
         <table class="table">
-            <tr class="info">
+            <thead class="thead-light">
                 <th>
                     #
                 </th>
@@ -27,7 +27,7 @@
                         Options
                     </th>
                 {% endif %}
-            </tr>
+            </thead>
             {% for book in book_list %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
@@ -37,8 +37,8 @@
                     <td>{{ book.display_genre }}</td>
                     {% if user.is_staff %}
                         <td>
-                            <a class="text-danger" href="{% url 'are-you-sure-delete-book' book.pk %}">Delete</a>
-                            <a href="#" class="text-info">Edit</a>
+                            <a class="btn btn-outline-danger" href="{% url 'delete-book' book.pk %}">Delete</a>
+                            <a href="{% url 'update-book' book.pk %}" class="btn btn-outline-primary">Edit</a>
                         </td>
                     {% endif %}
                 </tr>

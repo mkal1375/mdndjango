@@ -35,10 +35,11 @@ class Book(models.Model):
 
     def display_genre(self):
         return ", ".join([genre.name for genre in self.genre.all()[:3]])
+
     display_genre.short_description = 'Genre'
 
     def __str__(self):
-        return "{} ({}, {})".format(self.title, self.author.last_name,self.author.first_name)
+        return "{} ({}, {})".format(self.title, self.author.last_name, self.author.first_name)
 
     def get_absolute_url(self):
         return reverse('book-detail', args=[str(self.id)])
@@ -55,14 +56,12 @@ class BookInstance(models.Model):
     due_back = models.DateField(null=True, blank=True)
     borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
-
     LOAN_STATUS = (
         ('m', 'Maintenance'),
         ('o', 'On loan'),
         ('a', 'Available'),
         ('r', 'Reserved'),
     )
-
 
     status = models.CharField(max_length=1, choices=LOAN_STATUS, blank=True, default='m', help_text='Book availability')
 
@@ -78,19 +77,20 @@ class BookInstance(models.Model):
     def left_days(self):
         return (self.due_back - date.today()).days
 
-
     def status_to_string(self):
         for status in self.LOAN_STATUS:
             if status[0] == self.status:
                 return status[1]
 
+    def get_absolute_url(self):
+        return reverse('book-detail', args=[str(self.book.id)])
+
     class Meta:
         ordering = ["due_back"]
         permissions = (("can_mark_returned", "Set book as returned"),)
 
-
     def __str__(self):
-        return "{} ({})".format(self.book.title,self.status_to_string())
+        return "{} ({})".format(self.book.title, self.status_to_string())
 
 
 class Author(models.Model):

@@ -5,7 +5,7 @@
 
     {% if bookinstance_list %}
         <table class="table">
-            <tr class="info">
+            <thead class="thead-light">
                 <th>Book name</th>
                 <th>Due Back</th>
                 <th>Days Left</th>
@@ -14,7 +14,7 @@
                         Renew
                     </th>
                 {% endif %}
-            </tr>
+            </thead>
             {% for bookinstance in bookinstance_list %}
                 <tr>
                     <td><a href="{% url 'book-detail' bookinstance.book.pk %}">{{ bookinstance.book.title }}</a></td>
@@ -26,7 +26,7 @@
                     {% endif %}
                     {% if perms.catalog.can_mark_returned %}
                         <td>
-                            <a href="{% url 'renew-book-librarian' bookinstance.id %}">Renew</a>
+                            <a href="{% url 'renew-book-librarian' bookinstance.id %}" class="btn btn-outline-warning">Renew</a>
                         </td>
                     {% endif %}
                 </tr>

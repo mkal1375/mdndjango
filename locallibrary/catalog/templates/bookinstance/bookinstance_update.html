@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>
+        Edit Book Instance
+    </title>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <table class="table">
+            <thead class="thead-light">
+            <th><h4>Edit Book Instance</h4></th>
+            <th></th>
+            </thead>
+            <tr>
+                <td><strong>Id:</strong></td>
+                <td>{{ object.id }}</td>
+            </tr>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" class="btn btn-outlineprimary" value="Save"/>
+        <a href="{% url 'book-detail' object.book.id %}" class="btn btn-outlinesecondary">Cancel</a>
+    </form>
+{% endblock %}
