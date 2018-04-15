@@ -21,4 +21,7 @@ urlpatterns = [
     path('author/create', views.AuthorCreateView.as_view(), name='create-author'),
     path('author/<int:pk>/update', views.AuthorUpdateView.as_view(), name='update-author'),
     path('author/<int:pk>/delete', views.AuthorDeleteView.as_view(), name='delete-author'),
+    path('book/<uuid:instance_id>/<int:user_id>/<str:due_back>/lending', views.lending, name='lending'),
+    path('book/<uuid:instance_id>/<int:user_id>/lending', views.lending, name='lending'),
+    path('book/<uuid:instance_id>/backing', views.backing, name='backing')
 ]

@@ -2,15 +2,14 @@ import datetime
 
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views import generic
-from .models import Book, Author, BookInstance, Genre
+from .models import Book, Author, BookInstance, Genre, User
 from .forms import RenewBookForm, AddBookForm
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django import forms
-
 
 
 def index(request):
@@ -167,13 +166,13 @@ class BookDeleteView(DeleteView):
 class BookInstanceCreateView(CreateView):
     # TODO: add feature / add patch(book/<int:book_id>/create_instance and add link on books list.
     model = BookInstance
-    fields = ['book', 'imprint', 'status']
+    fields = '__all__'
     template_name = 'bookinstance/bookinstance_create.html'
 
 
 class BookInstanceUpdateView(UpdateView):
     model = BookInstance
-    fields = ['book', 'imprint', 'status']
+    fields = '__all__'
     template_name = 'bookinstance/bookinstance_update.html'
 
 
@@ -193,14 +192,55 @@ class AuthorCreateView(CreateView):
     template_name = 'author/author_create.html'
     # TODO: add date picker for date fields.
 
+
 class AuthorUpdateView(UpdateView):
     model = Author
     fields = '__all__'
     template_name = 'author/author_update.html'
     # TODO: add date picker for date fields.
 
+
 class AuthorDeleteView(DeleteView):
     model = Author
     template_name = 'author/author_confirm_delete.html'
     success_url = reverse_lazy('authors')
 
+
+def lending(request, instance_id, user_id, due_back=None):
+    try:
+        instance = get_object_or_404(BookInstance, pk=instance_id)
+        member = get_object_or_404(User, pk=user_id)
+        if instance.status == 'o':
+            return JsonResponse({'status': False, 'borrower':instance.borrower.id, 'exception': 'This copy has been borrowed.'})
+        elif instance.status != 'a':
+            return JsonResponse({'status': False, 'instance-status': instance.status, 'exception': 'This copy id not available.'})
+        instance.borrower = member
+        instance.status = 'o'
+        if due_back != None:
+            due_back = datetime.datetime.strptime(due_back,'%Y-%d-%m').date()
+            timedelta = (due_back - datetime.date.today())
+            if  timedelta.days < 0:
+                return JsonResponse({'status': False, 'exception': 'due back is in past'})
+            elif timedelta.days > 21:
+                return JsonResponse({'status': False, 'exception': 'over max! max lent days is 21 (3 week)'})
+        else:
+            instance.due_back = datetime.date.today() + datetime.timedelta(weeks=3)
+        instance.save()
+    except Exception as e:
+        return JsonResponse({'status': False, 'exception': str(e)})
+    return JsonResponse({'status': True, 'instance_id':instance_id, 'member_id':user_id})
+
+def backing(request, instance_id):
+    try:
+        instance = get_object_or_404(BookInstance, pk=instance_id)
+        if instance.status != 'o':
+            return JsonResponse(
+                {'status': False, 'exception': 'This copy has not been borrowed'})
+        borrower_id = instance.borrower.id
+        instance.borrower = None
+        instance.status = 'a'
+        instance.due_back = None
+        instance.save()
+    except Exception as e:
+        return JsonResponse({'status':False, 'exception':str(e)})
+    return JsonResponse({'status': True, 'borrower': borrower_id, 'instance-id': instance.id})
